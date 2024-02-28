@@ -22,14 +22,15 @@ struct HomeView: View {
             VStack {
                 homeHeader
                 
+                columnTitles
+                
                 if !showPortforlio {
-                    List {
-                        ForEach(vm.allCoins) { coin in
-                            CoinRowView(coin: coin, showHoldingColumn: false)
-                        }
-                    }
-                    .listStyle(PlainListStyle())
-                    .transition(.move(edge: .leading))
+                    allCoinsList
+                        .transition(.move(edge: .leading))
+                }
+                if showPortforlio {
+                    portfolioCoinsList
+                        .transition(.move(edge: .trailing))
                 }
                 Spacer(minLength: 0)
             }
@@ -69,6 +70,41 @@ extension HomeView {
                     }
             }
         }
+        .padding(.horizontal)
+    }
+    
+    private var allCoinsList: some View {
+        List {
+            ForEach(vm.allCoins) { coin in
+                CoinRowView(coin: coin, showHoldingColumn: false)
+                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+    private var portfolioCoinsList: some View {
+        List {
+            ForEach(vm.portfolioCoins) { coin in
+                CoinRowView(coin: coin, showHoldingColumn: true)
+                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+    private var columnTitles: some View {
+        HStack {
+            Text("Coin")
+            Spacer()
+            if showPortforlio {
+                Text("Holdings")
+            }
+            Text("price")
+                .frame(width: UIScreen.main.bounds.width/3.5, alignment: .trailing)
+        }
+        .font(.caption)
+        .foregroundColor(Color.theme.secondaryText)
         .padding(.horizontal)
     }
 }
